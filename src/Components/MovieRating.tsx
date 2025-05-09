@@ -1,9 +1,5 @@
-import { FC } from 'react';
-
-// Тип для пропсов компонента рейтинга
-interface MovieRatingProps {
-  rating?: number;
-}
+import { FC } from "react";
+import { MovieRatingProps } from "../Types/Types";
 
 // Компонент отображения рейтинга фильма
 const MovieRating: FC<MovieRatingProps> = ({ rating }) => {
@@ -12,7 +8,7 @@ const MovieRating: FC<MovieRatingProps> = ({ rating }) => {
     return (
       <div
         className="movie-rating"
-        style={{ backgroundColor: 'var(--muted-foreground)' }}
+        style={{ backgroundColor: "var(--muted-foreground)" }}
       >
         <span>Нет рейтинга</span>
       </div>
@@ -23,9 +19,9 @@ const MovieRating: FC<MovieRatingProps> = ({ rating }) => {
 
   // Определяем цвет фона в зависимости от рейтинга
   const getRatingColor = (rating: number) => {
-    if (rating >= 7.5) return 'var(--rating-high)';
-    if (rating >= 5) return 'var(--rating-medium)';
-    return 'var(--rating-low)';
+    if (rating >= 7.5) return "var(--rating-high)";
+    if (rating >= 5) return "var(--rating-medium)";
+    return "var(--rating-low)";
   };
 
   return (

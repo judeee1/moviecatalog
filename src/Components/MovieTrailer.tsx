@@ -1,9 +1,5 @@
-import { FC } from 'react';
-
-// Тип для пропсов компонента трейлера
-interface MovieTrailerProps {
-  videoKey?: string; // Ключ видео с YouTube
-}
+import { FC } from "react";
+import { MovieTrailerProps } from "../Types/Types";
 
 // Компонент для отображения трейлера фильма
 const MovieTrailer: FC<MovieTrailerProps> = ({ videoKey }) => {
@@ -30,7 +26,7 @@ const MovieTrailer: FC<MovieTrailerProps> = ({ videoKey }) => {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         className="trailer-iframe"
-      ></iframe>{' '}
+      ></iframe>{" "}
       {/* Встраиваем видео */}
     </div>
   );

@@ -32,3 +32,26 @@ export interface FavoriteButtonProps {
 export interface MovieCarouselProps {
   movies: Movie[];
 }
+
+export interface ThemeState {
+  theme: "dark" | "light";
+  toggleTheme: () => void;
+}
+
+// Интерфейс для хранилища избранного
+export interface FavoritesState {
+  favorites: Movie[];
+  addFavorite: (movie: Movie) => void;
+  removeFavorite: (id: number) => void;
+  isFavorite: (id: number) => boolean;
+}
+
+// Тип для пропсов компонента трейлера
+export interface MovieTrailerProps {
+  videoKey?: string; // Ключ видео с YouTube
+}
+
+// Тип для пропсов компонента рейтинга
+export interface MovieRatingProps {
+  rating?: number;
+}
