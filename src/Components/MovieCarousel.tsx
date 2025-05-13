@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import MovieCard from './MovieCard';
-import { MovieCarouselProps } from '../Types/Types';
+import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import MovieCard from "./MovieCard";
+import { MovieCarouselProps } from "../Types/Types";
 
 // Компонент карусели фильмов, принимает массив фильмов как пропс
 const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies }) => {
@@ -22,15 +22,17 @@ const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies }) => {
             transition={{ duration: 0.5 }}
           >
             {movies.map((movie, i) => (
+              // Каждый фильм оборачиваем в <li> с анимацией
               // Элемент карусели с анимацией сдвига
               <motion.li
                 key={movie.id}
-                className={`carousel-item ${index === i ? 'active' : ''}`}
+                className={`carousel-item ${index === i ? "active" : ""}`}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <MovieCard movie={movie} /> {/* Карточка фильма */}
+                <MovieCard movie={movie} />{" "}
+                {/* Внутри компонент карточки фильма */}
               </motion.li>
             ))}
           </motion.ul>

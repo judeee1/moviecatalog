@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { MovieTrailerProps } from "../Types/Types";
 
-// Компонент для отображения трейлера фильма
+// Компонент для отображения трейлера фильма с ключом
 const MovieTrailer: FC<MovieTrailerProps> = ({ videoKey }) => {
   // Если ключа нет, показываем сообщение
   if (!videoKey) {
