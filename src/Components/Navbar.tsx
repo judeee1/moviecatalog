@@ -11,8 +11,8 @@ const Navbar = () => {
   // Обработчик клика по логотипу
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    clearSearch(); // Очищаем поиск
-    navigate("/?page=1"); // Переходим на первую страницу
+    clearSearch();
+    navigate("/?page=1");
   };
 
   return (
@@ -59,9 +59,9 @@ const Navbar = () => {
             </NavLink>
           </li>
         </ul>
-        <ThemeToggle /> {/* Переключатель темы */}
+        <ThemeToggle />
       </div>
-      <Outlet /> {/* Рендеринг дочерних маршрутов */}
+      <Outlet /> {/* рендер дочерних маршрутов */}
     </nav>
   );
 };

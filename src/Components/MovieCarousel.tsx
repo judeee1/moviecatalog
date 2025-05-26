@@ -6,7 +6,7 @@ import { MovieCarouselProps } from "../Types/Types";
 // Компонент карусели фильмов, принимает массив фильмов как пропс
 const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies }) => {
   const [index] = useState(0); // Индекс активного элемента
-  const carouselRef = useRef<HTMLUListElement>(null); // Ссылка на список карусели
+  const carouselRef = useRef<HTMLUListElement>(null); // Ссылка на список ul карусели
 
   return (
     <div className="movie-carousel">
@@ -17,13 +17,13 @@ const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies }) => {
           <motion.ul
             ref={carouselRef}
             className="carousel-list"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0 }} //начальное состояние невидим
+            animate={{ opacity: 1 }} //конечное состояние видим
             transition={{ duration: 0.5 }}
           >
             {movies.map((movie, i) => (
               // Каждый фильм оборачиваем в <li> с анимацией
-              // Элемент карусели с анимацией сдвига
+              // Элемент карусели с анимацией
               <motion.li
                 key={movie.id}
                 className={`carousel-item ${index === i ? "active" : ""}`}
@@ -38,7 +38,7 @@ const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies }) => {
           </motion.ul>
         </>
       ) : (
-        <p className="no-movies-text">Похожих фильмов не найдено</p> // Сообщение, если фильмов нет
+        <p className="no-movies-text">Похожих фильмов не найдено</p> // Сообщение если фильмов нет
       )}
     </div>
   );

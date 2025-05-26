@@ -19,10 +19,9 @@ const MovieTrailer: FC<MovieTrailerProps> = ({ videoKey }) => {
       <h2 className="trailer-title">Трейлер</h2>
       <iframe
         width="100%"
-        height="315"
+        height="530"
         src={youtubeUrl}
         title="Трейлер фильма"
-        frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         className="trailer-iframe"

@@ -9,7 +9,7 @@ import MovieRating from "./MovieRating";
 // Компонент карточки фильма, принимает объект фильма как пропс
 const MovieCard: FC<MovieCardProps> = ({ movie }) => {
   return (
-    // Ссылка на страницу фильма с динамическим ID (например, /movie/123)
+    // Ссылка на страницу фильма с динамическим ID
     <Link to={`/movie/${movie.id}`} className="movie-card-link">
       {/* Анимированный контейнер карточки с эффектом увеличения при наведении */}
       <motion.div

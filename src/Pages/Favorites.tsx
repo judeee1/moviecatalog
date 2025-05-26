@@ -1,6 +1,6 @@
-import React from 'react';
-import { useFavoritesStore } from '../Store/useFavoritesStore';
-import MovieCard from '../Components/MovieCard';
+import React from "react";
+import { useFavoritesStore } from "../Store/useFavoritesStore";
+import MovieCard from "../Components/MovieCard";
 
 // Компонент страницы избранных фильмов
 const Favorites: React.FC = () => {
@@ -10,11 +10,12 @@ const Favorites: React.FC = () => {
     <div className="favorites-container">
       <h1 className="favorites-title">Избранные фильмы</h1>
       {favorites.length === 0 ? (
-        <p className="favorites-message">Нет избранных фильмов.</p> // Сообщение, если избранных нет
+        <p className="favorites-message">Нет избранных фильмов.</p> // Сообщение если избранных нет
       ) : (
         <div className="movies-grid">
+          {/*перебираем массив favorites и отображаем для каждого элемента компонент*/}
           {favorites.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} alwaysVisible /> // Карточка фильма
+            <MovieCard key={movie.id} movie={movie} /> // Карточка фильма
           ))}
         </div>
       )}

@@ -7,147 +7,170 @@ import MovieFilters from "../Components/MovieFilters";
 import { useSearchStore } from "../Store/useSearchStore";
 import { useLocation, useNavigate } from "react-router-dom";
 
-// Главная страница, где отображаются фильмы
 const Home = () => {
-  // Состояния для популярных фильмов, загрузки, ошибок и страниц
+  // Локальное состояние для хранения популярных фильмов
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
+  // Флаг загрузки — true пока данные загружаются
   const [loading, setLoading] = useState(true);
+  // Ошибка при загрузке если произошла
   const [error, setError] = useState<string | null>(null);
+  // Текущая страница
   const [currentPage, setLocalCurrentPage] = useState(1);
+  // Общее число страниц для популярных фильмов
   const [totalPages, setTotalPages] = useState(1);
 
-  // Из zustand-хранилища берем данные поиска, фильтров и страниц
+  // Из глобального хранилища получаем данные:
   const {
-    query,
-    results,
-    filters,
-    currentPage: filterPage,
-    totalPages: filterTotalPages,
-    setCurrentPage,
+    query, // текущая поисковая строка
+    results, // результаты поиска или фильтрации
+    filters, // активные фильтры
+    currentPage: filterPage, // текущая страница из фильтра/поиска
+    totalPages: filterTotalPages, // общее число страниц при поиске/фильтре
+    setCurrentPage, // функция для изменения страницы в глобальном хранилище
   } = useSearchStore();
 
-  const location = useLocation(); // для получения параметров из URL
-  const navigate = useNavigate(); // для переходов по страницам
+  // Хук для получения параметров из URL
+  const location = useLocation();
+  // Хук для изменения URL
+  const navigate = useNavigate();
+  // Ограничение на максимальное количество страниц
   const MAX_PAGES = 300;
 
-  // Считываем номер страницы из URL при монтировании или смене URL
+  // Эффект: при загрузке страницы или изменении URL читаем параметр ?page
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const pageFromUrl = parseInt(params.get("page") || "1", 10);
+    const params = new URLSearchParams(location.search); // Извлекаем параметры из URL
+    const pageFromUrl = parseInt(params.get("page") || "1", 10); // Парсим номер страницы из параметра page, если нет — 1
 
+    // Если страница валидная обновляем локальное состояние
     if (pageFromUrl >= 1 && pageFromUrl <= MAX_PAGES) {
-      setLocalCurrentPage(pageFromUrl); // сохраняем локально текущую страницу
+      setLocalCurrentPage(pageFromUrl);
     }
-  }, [location.search, setCurrentPage]);
+  }, [location.search, setCurrentPage]); // Срабатывает при изменении URL
 
-  // Загружаем популярные фильмы с сервера, если нет активного поиска/фильтров
+  // загружаем популярные фильмы, если не выполняется поиск или фильтрация
   useEffect(() => {
     const fetchPopularMovies = async () => {
       try {
-        setLoading(true);
+        setLoading(true); // Включаем индикатор загрузки
+        // Получаем данные с сервера
         const data = await getPopularMovies(currentPage);
-        setPopularMovies(data.results); // сохраняем фильмы
-        setTotalPages(Math.min(data.total_pages, MAX_PAGES)); // ограничиваем максимальное число страниц
-        setLoading(false);
+        // Сохраняем список фильмов
+        setPopularMovies(data.results);
+        // Обновляем количество страниц, но не больше MAX_PAGES
+        setTotalPages(Math.min(data.total_pages, MAX_PAGES));
+        setLoading(false); // Выключаем индикатор загрузки
       } catch {
+        // Если ошибка — сохраняем сообщение об ошибке
         setError("Не удалось загрузить популярные фильмы.");
         setLoading(false);
       }
     };
 
-    // Загружаем только если поиск и фильтры не активны
+    // Загружаем популярные фильмы, только если неактивен поиск и фильтры
     if (!query.trim() && !filters.year && !filters.genre && !filters.rating) {
       fetchPopularMovies();
     } else {
-      setLoading(false);
+      setLoading(false); // Если активен поиск или фильтр — не загружаем популярные
     }
-  }, [currentPage, query, filters]);
+  }, [currentPage, query, filters]); // Зависимости — при их изменении эффект перезапускается
 
-  // Смена страницы по клику на пагинацию
+  // Обработчик смены страницы при клике на пагинацию
   const handlePageChange = (page: number) => {
+    // Определяем, какие данные используются: фильтрованные или популярные
     const activeTotalPages = results.length > 0 ? filterTotalPages : totalPages;
     const activeCurrentPage = results.length > 0 ? filterPage : currentPage;
 
+    // Переход на новую страницу, если номер корректный и он отличается от текущего
     if (page >= 1 && page <= activeTotalPages && page !== activeCurrentPage) {
-      setLocalCurrentPage(page);
-      navigate(`/?page=${page}`); // обновляем URL
-      window.scrollTo({ top: 0, behavior: "smooth" }); // плавно скроллим вверх
+      setLocalCurrentPage(page); // Обновляем локальную страницу
+      navigate(`/?page=${page}`); // Обновляем URL
+      window.scrollTo({ top: 0, behavior: "smooth" }); // Плавно прокручиваем вверх
     }
   };
 
-  // Выбираем, какие фильмы отображать: результаты поиска или популярные
+  // Выбираем, какие фильмы показывать: отфильтрованные или популярные
   const movies = results.length > 0 ? results : popularMovies;
+
+  // Флаг активности поиска или фильтрации
   const isSearchOrFilterActive =
     query.trim() || filters.year || filters.genre || filters.rating;
 
-  // Отображаемые значения для пагинации (зависят от поиска)
+  // Вычисляем значения текущей и общей страницы
   const displayTotalPages = results.length > 0 ? filterTotalPages : totalPages;
   const displayCurrentPage = results.length > 0 ? filterPage : currentPage;
 
   return (
     <div className="home-container">
-      {/* Заголовок зависит от состояния поиска */}
+      {/* Заголовок страницы — зависит от активности поиска/фильтрации */}
       <h1 className="home-title">
         {isSearchOrFilterActive ? "Результаты" : "Популярные фильмы"}
       </h1>
 
       <SearchBar />
+
       <MovieFilters />
 
-      {/* Состояния загрузки, ошибки и пустого результата */}
+      {/* Статус: загрузка */}
       {loading && (
         <div className="status-message">
           <p className="loading-text">Загрузка фильмов...</p>
         </div>
       )}
 
+      {/* Статус: ошибка */}
       {!loading && error && (
         <div className="status-message">
           <p className="error-text">{error}</p>
         </div>
       )}
 
+      {/* Статус: нет результатов */}
       {!loading && !error && movies.length === 0 && (
         <div className="status-message">
           <p className="empty-text">
             {isSearchOrFilterActive
-              ? "Фильмы не найдены"
-              : "Нет фильмов для отображения"}
+              ? "Фильмы не найдены" // если активен поиск или фильтр
+              : "Нет фильмов для отображения"}{" "}
+            // иначе
           </p>
         </div>
       )}
 
-      {/* Отображение списка фильмов и пагинации */}
+      {/* Основной контент: список фильмов и пагинация */}
       {!loading && !error && movies.length > 0 && (
         <>
+          {/* Сетка с карточками фильмов */}
           <div className="movies-grid">
             {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} /> // Отдельная карточка фильма
+              <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
 
-          {/* Пагинация — если есть больше одной страницы */}
+          {/* Пагинация — только если есть больше одной страницы */}
           {displayTotalPages > 1 && (
             <div className="pagination">
+              {/* Кнопка "назад" */}
               <button
                 className="pagination-button"
                 onClick={() => handlePageChange(displayCurrentPage - 1)}
-                disabled={displayCurrentPage === 1}
+                disabled={displayCurrentPage === 1} // неактивна на первой странице
               >
                 Назад
               </button>
 
+              {/* Номера страниц */}
               <div className="pagination-numbers">
-                {/* Показ 5 страниц рядом с текущей */}
                 {Array.from(
-                  { length: Math.min(5, displayTotalPages) },
+                  { length: Math.min(5, displayTotalPages) }, // максимум 5 страниц отображаем
                   (_, i) => {
-                    const page = displayCurrentPage - 2 + i;
+                    const page = displayCurrentPage - 2 + i; // вычисляем номер страницы
                     if (page > 0 && page <= displayTotalPages) {
                       return (
                         <button
                           key={page}
-                          className={`pagination-number ${page === displayCurrentPage ? "active" : ""}`}
+                          className={`pagination-number ${
+                            page === displayCurrentPage ? "active" : ""
+                          }`}
                           onClick={() => handlePageChange(page)}
                         >
                           {page}
@@ -158,7 +181,7 @@ const Home = () => {
                   }
                 )}
 
-                {/* Многоточие и кнопка последней страницы */}
+                {/* Многоточие и последняя страница (если далеко от текущей) */}
                 {displayTotalPages > 5 &&
                   displayCurrentPage < displayTotalPages - 2 && (
                     <span className="pagination-ellipsis">...</span>
@@ -174,10 +197,11 @@ const Home = () => {
                   )}
               </div>
 
+              {/* Кнопка "вперед" */}
               <button
                 className="pagination-button"
                 onClick={() => handlePageChange(displayCurrentPage + 1)}
-                disabled={displayCurrentPage === displayTotalPages}
+                disabled={displayCurrentPage === displayTotalPages} // неактивна на последней
               >
                 Вперед
               </button>
@@ -189,4 +213,5 @@ const Home = () => {
   );
 };
 
+// Экспорт компонента
 export default Home;

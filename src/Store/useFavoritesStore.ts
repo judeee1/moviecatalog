@@ -26,7 +26,7 @@ export const useFavoritesStore = create<FavoritesState>()(
     }),
     {
       name: "favorites-storage", // Имя для сохранения в localStorage
-      partialize: (state) => ({ favorites: state.favorites }),
+      partialize: (state) => ({ favorites: state.favorites }), //сохранение онли favorites без остального
     }
   )
 );
